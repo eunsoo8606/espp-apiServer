@@ -2,8 +2,9 @@
   "name": "myapp",
   "version": "0.0.0",
   "private": true,
+  "main":"./src/server.js",
   "scripts": {
-    "start": "cross-env NODE_PATH=./src node ./src/server"
+    "start": "cross-env"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
