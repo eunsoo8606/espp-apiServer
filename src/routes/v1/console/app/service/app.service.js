@@ -67,6 +67,7 @@ module.exports = {
                     db.rollback();
                     db.end();
                     res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','INSERT Error','INSERT FAILAD..'));
+                    return false;
                 }
                 db.commit();
                 db.end();

@@ -1,13 +1,13 @@
-const express = require('express');
-const appVo = require('./vo/app.vo').app;
-const requestIp = require('request-ip');
-const appService = require('./service/app.service');
-const util        = require('../../../../utils/util');
-const stCd      = require('../../../../utils/statusCode');
-const errors      = require('../../../../utils/error');
-const success      = require('../../../../utils/success');
-const resMsg      = require('../../../../utils/responseMssage');
-const router  = express.Router();
+const express       = require('express');
+const appVo         = require('./vo/app.vo').app;
+const requestIp     = require('request-ip');
+const appService    = require('./service/app.service');
+const util          = require('../../../../utils/util');
+const stCd          = require('../../../../utils/statusCode');
+const errors        = require('../../../../utils/error');
+const success       = require('../../../../utils/success');
+const resMsg        = require('../../../../utils/responseMssage');
+const router        = express.Router();
 
 router.post("/",(req,res)=>{
     var client_id = util.getClientId(req.body.id);

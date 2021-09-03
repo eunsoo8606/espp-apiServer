@@ -3,7 +3,7 @@ module.exports ={
         EXPIRED_TOKEN:          '토큰이 만료 되었습니다.',
         INVALID_TOKEN:          '토큰이 유효하지 않습니다.',
         EMPTY_VALUE:            '요청 값이 없습니다.',
-        BAD_REQUEST:            '요청 정보가 옳바르지 않습니다.',
+        BAD_REQUEST:            '요청 정보가 올바르지 않습니다.',
         LOGIN_STATE_LOCKED:     '로그인 상태를 활성화 해주세요.',
         DOMAIN_NOTFOUND:        '등록된 도메인이 없습니다.',
         APPLICATION_NOTFOUND:   '조회된 애플리케이션이 없습니다.',
