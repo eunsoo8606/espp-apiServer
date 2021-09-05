@@ -7,11 +7,12 @@ module.exports = {
             
         return success;
     },
-    success_json:(msg,data,result)=>{
+    success_json:(msg,data,result,etc)=>{
         success.success = result;
         success.providor = process.env.providor;
         success.message = msg;
         success.data = data;
+        success.etc  = etc;
 
         return success;
     }

@@ -6,14 +6,21 @@ module.exports={
     */
     getTotalPageCount:(totalCount,recodeCountPerPage)=>{
         if(recodeCountPerPage == "") recodeCountPerPage = 10;
+        
         var totalPageCount = ((totalCount - 1) / recodeCountPerPage) + 1;
 		return totalPageCount;
     },
     firstIndex:(cpage,recodeCountPerPage)=>{
-        var firstRecordIndex = ((cpage - 1) == 0 ? 1:cpage) * recodeCountPerPage;
+        if(cpage == undefined) cpage = 1;
+        if(recodeCountPerPage == "") recodeCountPerPage = 10;
+
+        var firstRecordIndex = (cpage - 1) * recodeCountPerPage;
 		return firstRecordIndex;
     },
     lastIndex:(cpage,recodeCountPerPage)=>{
+        if(cpage == undefined) cpage = 1;
+        if(recodeCountPerPage == "") recodeCountPerPage = 10;
+
         var lastIndex = cpage * recodeCountPerPage;
 		return lastIndex;
     }

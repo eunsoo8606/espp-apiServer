@@ -134,42 +134,38 @@ module.exports = {
         });// new Promise Close
     },
     tokenValidator:(req,res,next)=>{
-        console.log("tokenValidator init...")
         var reqToken = req.headers.authorization;
-        var masterKey = req.query.local;
-        if(masterKey !== undefined){
-            if(masterKey === "FEGnkJwIfbvnzlmIG534uQ==")
-            return next();
-        }
 
         if(reqToken === undefined || reqToken === ''){
             reqToken = 'undefined';
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_TOKEN,'token',reqToken,'TOKEN ERROR','TOKEN NOTFOUND'));
+            res.end();
             return false;
         }
 
         var tokenCategory = reqToken.split(' ');
         if(tokenCategory[0] !== 'Bearer'){
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.BAD_REQUEST,'token','','TYPE ERROR','Invalid header type'));
+            res.end();
             return false;
         }
         reqToken = tokenCategory[1];
         var result = token.verify(reqToken);
         if(result === 'TOKEN_INVALID') {
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,'token','','Invalid ERROR','Invalid token'));
+            res.end();
             return false;
         }
         if(result === 'TOKEN_EXPIRED') {
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EXPIRED_TOKEN,'token','','Invalid ERROR','Invalid token'));
+            res.end();
             return false;
         }
-
         if(req.method === "POST") {
             req.body.id = result.memberSeq;
         }else{
             req.query.id = result.memberSeq;
         }
-
         return next();
     }
 }
