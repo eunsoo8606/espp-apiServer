@@ -161,11 +161,8 @@ module.exports = {
             res.end();
             return false;
         }
-        if(req.method === "POST") {
-            req.body.id = result.memberSeq;
-        }else{
-            req.query.id = result.memberSeq;
-        }
+        req.query.id = result.memberSeq;
+
         return next();
     }
 }

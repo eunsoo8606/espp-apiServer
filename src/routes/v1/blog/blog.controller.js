@@ -3,7 +3,7 @@ const express       = require('express');
 const router        = express.Router();
 const blogService   = require('./service/blog.service');
 const pagination    = require('../../../utils/pagination');
-const blog          = require('./vo/blog.vo').blog;
+const blogVo          = require('./vo/blog.vo');
 const stCd          = require('../../../utils/statusCode');
 const resMsg        = require('../../../utils/responseMssage');
 const success       = require('../../../utils/success');
@@ -12,10 +12,10 @@ const success       = require('../../../utils/success');
 router.post('/write',(req,res)=>{
     var title      = req.body.title;
     var content    = req.body.content;
-    var memberSeq  = req.body.id;
+    var memberSeq  = req.query.id;
     var mainImg    = req.body.mainImg;
     var ip         = requestIp.getClientIp(req);
-    blogService.insert(blog(memberSeq,mainImg,title,content,ip,memberSeq),res).then((data)=>{
+    blogService.insert(blogVo.blog(memberSeq,mainImg,title,content,ip,memberSeq),res).then((data)=>{
         if(data > 0){
             res.status(stCd.CREATED).send(success.success_json(resMsg.CREATED,data,true));
             res.end();
@@ -65,7 +65,29 @@ router.get('/list',(req,res)=>{
         blogService.deleteBlog(blogSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });
-    })
+    });
+
+    router.put("/detail",(req,res)=>{
+        var title      = req.body.title;
+        var content    = req.body.content;
+        var memberSeq  = req.query.id;
+        var mainImg    = req.body.mainImg;
+        var blogSeq    = req.body.blogSeq;
+        var ip         = requestIp.getClientIp(req);
+        blogService.update(blogVo.updateBlog(title,content,mainImg,ip,memberSeq,blogSeq),res).then((data)=>{
+            if(data > 0){
+                res.status(stCd.CREATED).send(success.success_json(resMsg.SUCCESS_REQUEST,data,true));
+                res.end();
+            }
+        });
+    });
+    router.get("/top3",(req,res)=>{
+        var memberSeq = req.query.id;
+        console.log("top3 init..")
+        blogService.selectBlogTop3(memberSeq,res).then((data)=>{
+            res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
+        });
+    });
 
 });
 

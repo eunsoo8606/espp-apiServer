@@ -1,7 +1,7 @@
 module.exports={
     INSERT : 'INSERT INTO BLOG (MEMBER_SEQ,MAIN_IMG,TITLE,CONTENT,REGP_IP,REGP_SEQ)VALUES(?,?,?,?,?,?)',
     DELETE : 'DELETE FROM BLOG WHERE BLOG_SEQ = ?',
-    UPDATE : '',
+    UPDATE : 'UPDATE BLOG SET TITLE = ?, CONTENT = ?, MAIN_IMG = ?, MDFP_IP =? ,MDFP_SEQ = ?, MDF_DTTM = NOW() WHERE BLOG_SEQ = ?',
     LIST   :(title,content)=>{ 
         var list = `SELECT B.* 
                       FROM (SELECT @rownum:=@rownum+1 AS RNUM,
@@ -20,5 +20,10 @@ module.exports={
                    return list;
             },
     TOTAL  : `SELECT COUNT(*) as COUNT FROM BLOG WHERE MEMBER_SEQ = ?`,
-    SELECTONE:'SELECT * FROM BLOG WHERE BLOG_SEQ = ?'
+    SELECTONE:'SELECT * FROM BLOG WHERE BLOG_SEQ = ?',
+    TOP3:`SELECT *
+            FROM BLOG
+           WHERE MEMBER_SEQ = ?
+        ORDER BY REG_DTTM DESC
+           LIMIT 0,3`
 }

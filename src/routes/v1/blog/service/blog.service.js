@@ -107,5 +107,49 @@ module.exports = {
                     return resolve(results.affectedRows);
                 });
         });
+    },
+    update:(blog,res)=>{
+        return new Promise((resolve,reject)=>{
+            var db = mysqlConObj.init();
+                db.beginTransaction();
+                console.log("blog update query : ", blogQs.UPDATE);
+                console.log("blog data : ", blog)
+                db.query(blogQs.UPDATE,blog,function(err,results,fields){
+                    console.log("result :", results)
+                    if (err !== undefined && err !== null) {
+                        console.log("init...",err)
+                        db.rollback();
+                        db.end();
+                        res.send(errors.error(resMsg.BAD_REQUEST,'APP VALUE',data,'QUERY ERROR',err));
+                        return false;
+                    }
+                    if(results.affectedRows === 0){
+                        db.rollback();
+                        db.end();
+                        res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','INSERT Error','INSERT FAILAD..'));
+                        return false;
+                    }
+                    db.commit();
+                    db.end();
+                    return resolve(results.affectedRows);
+                });
+        });
+    },
+    selectBlogTop3:(memberSeq,res)=>{
+        return new Promise((resolve,reject)=>{
+            var db = mysqlConObj.init();
+     
+            db.query(blogQs.TOP3,memberSeq, function (err, results, fields) {
+                //result Check
+                if (err || !results || results.length == 0) {
+                    res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','BAD REQUEST..'));
+                    db.end();
+                    return false;
+                }
+                var result = results;
+                db.end();
+                return resolve(result);
+            });
+        });
     }
 }

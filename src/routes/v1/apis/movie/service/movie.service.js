@@ -14,8 +14,8 @@ module.exports = {
                     res.send(error(resMsg.DB_ERROR,'pwd','','DB Error',err));
                     return false;
                 }
-                var movieList = results;
-                if(app === undefined){
+                var movieList = result;
+                if(movieList === undefined){
                     db.end();
                     res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','SELECT Error','SELECT FAILAD..'));
                 }
