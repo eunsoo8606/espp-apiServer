@@ -3,7 +3,7 @@ const express       = require('express');
 const router        = express.Router();
 const blogService   = require('./service/blog.service');
 const pagination    = require('../../../utils/pagination');
-const blogVo          = require('./vo/blog.vo');
+const blogVo        = require('./vo/blog.vo');
 const stCd          = require('../../../utils/statusCode');
 const resMsg        = require('../../../utils/responseMssage');
 const success       = require('../../../utils/success');
@@ -23,7 +23,7 @@ router.post('/write',(req,res)=>{
     });
 });
 router.get('/list',(req,res)=>{
-    console.log("list init....")
+    console.log("list init....",req.query.id)
     var blog           = {cpage:req.query.cpage,selectSize:req.query.selectSize,title:req.query.title,content:req.query.content,limit:req.query.limit,memberSeq:req.query.id};
     var paging         = {};
     var totalCount     = 0;
@@ -40,14 +40,11 @@ router.get('/list',(req,res)=>{
         else
         blog.lastIndex     = pagination.lastIndex(blog.cpage,blog.selectSize);
         
-        console.log("blog 값 : ", blog);
         blogService.selectList(blog,res).then((data)=>{
-
             paging.totalpage    = parseInt(totalPageCount);
             paging.totalCount   = parseInt(totalCount);
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data,'',paging));
             res.end();
-
         });
     });
 
@@ -83,7 +80,7 @@ router.get('/list',(req,res)=>{
     });
     router.get("/top3",(req,res)=>{
         var memberSeq = req.query.id;
-        console.log("top3 init..")
+        console.log("top3 init..", memberSeq);
         blogService.selectBlogTop3(memberSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });

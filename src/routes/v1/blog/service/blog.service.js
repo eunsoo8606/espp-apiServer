@@ -12,7 +12,6 @@ module.exports = {
                 db.beginTransaction();
                 console.log(" query : ", blogQs.INSERT)
                 db.query(blogQs.INSERT,data,function(err,results,fields){
-                    console.log("result :", results)
                     if (err !== undefined && err !== null) {
                         console.log("init...",err)
                         db.rollback();
@@ -54,7 +53,8 @@ module.exports = {
             db.query(blogQs.TOTAL,memberSeq, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
-                    res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','BAD REQUEST..'));
+                    console.log("err : ", err);
+                    res.send(errors.error(resMsg.BAD_REQUEST,err));
                     db.end();
                     return false;
                 }

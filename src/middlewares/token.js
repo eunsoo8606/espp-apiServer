@@ -19,6 +19,7 @@ const reOption = {
 
 module.exports = {
         sign: async(user) => {
+            console.log(" : ", acOption)
             /* 현재는 idx와 email을 payload로 넣었지만 필요한 값을 넣으면 됨! */
             const payload = {
                 memberSeq: user.MEMBER_SEQ,

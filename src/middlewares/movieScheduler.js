@@ -4,8 +4,6 @@ const movieServie = require('../routes/v1/apis/movie/service/movie.service');
 // npm i axios cheerio selenium-webdriver/chrome chromedriver --save
 // selenium-webdriver/chrome or chromedriver 는 아마 -g 로 태그 넣어서 설치
 // 환경변수로 지정해놔야 크롬이랑 로컬이랑 연동되어 조작 가능
-var express = require('express');
-var router = express.Router();
 
 //미들웨어 require
 const axios = require('axios');

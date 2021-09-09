@@ -39,23 +39,23 @@ module.exports = {
 
                 //result Check
                 if (err) {
-                    res.status(stCd.DB_ERROR).send(errors.error(resMsg.DB_ERROR,'','','APPLICATION ERROR',err));
+                    res.status(stCd.DB_ERROR).send(errors.error(resMsg.DB_ERROR,'DATABASE ERROR..'));
                     return false;
                 }
 
                 if(results.length == 0){
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.NOT_FOUND_VALUE,'','','APPLICATION ERROR',err));
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.ACCESS_DENIED,'USER NOT FOUND..'));
                     return false;
                 }
 
                 var user = results[0];
                 if(user.LOGIN_STATE === "N"){
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.LOGIN_STATE_LOCKED,'','','APPLICATION ERROR','LOGIN STATE LOCKED..'));
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.ACCESS_DENIED,'CHECK YOUR LOGIN STATUS..'));
                     return false;
                 }
 
                 if(user.WEB_DOMAIN === "" || user.WEB_DOMAIN === undefined){
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.DOMAIN_NOTFOUND,'','','APPLICATION ERROR','DOMAIN NOTFOUND..'));
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.ACCESS_DENIED,'DOMAIN NOT FOUND..'));
                     return false;
                 }
 
@@ -100,7 +100,11 @@ module.exports = {
         });
     },
     checkAuthorizationCode:(req,res,next)=>{
-        console.log("auth interceptor init...")
+        console.log("auth interceptor init...");
+        var reflreshToken = req.body.refreshToken;
+        if(reflreshToken !== undefined) return next();
+
+
         var authorizationCode = req.body.authorizationCode;
         if(authorizationCode === undefined){
             res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','CODE NOT FOUND..'));
@@ -138,29 +142,30 @@ module.exports = {
 
         if(reqToken === undefined || reqToken === ''){
             reqToken = 'undefined';
-            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_TOKEN,'token',reqToken,'TOKEN ERROR','TOKEN NOTFOUND'));
+            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_TOKEN,'TOKEN NOTFOUND'));
             res.end();
             return false;
         }
 
         var tokenCategory = reqToken.split(' ');
         if(tokenCategory[0] !== 'Bearer'){
-            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.BAD_REQUEST,'token','','TYPE ERROR','Invalid header type'));
+            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.BAD_REQUEST,'Invalid header type'));
             res.end();
             return false;
         }
         reqToken = tokenCategory[1];
         var result = token.verify(reqToken);
         if(result === 'TOKEN_INVALID') {
-            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,'token','','Invalid ERROR','Invalid token'));
+            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,'Invalid token'));
             res.end();
             return false;
         }
         if(result === 'TOKEN_EXPIRED') {
-            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EXPIRED_TOKEN,'token','','Invalid ERROR','Invalid token'));
+            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EXPIRED_TOKEN,'Invalid token'));
             res.end();
             return false;
         }
+        
         req.query.id = result.memberSeq;
 
         return next();

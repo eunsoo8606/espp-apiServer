@@ -3,7 +3,6 @@ const createError   = require('http-errors');
 const path          = require('path');
 const v1Routes      = require('./routes/v1/main');
 const authRoutes    = require('./routes/v1/auth/auth.controller');
-const ctIdVaildator = require('./middlewares/authorization').clientIdCheck;
 const shchedule     = require('./middlewares/movieScheduler');
 const app           = express();
 
@@ -14,7 +13,7 @@ app.set('view engine', 'ejs');
 app.set("views",path.join(__dirname,'/views'));
 
 app.use('/v1', v1Routes);
-app.use('/oauth',ctIdVaildator,authRoutes);
+app.use('/oauth',authRoutes);
 
 // error handler
 app.use((err, req, res, next) => {

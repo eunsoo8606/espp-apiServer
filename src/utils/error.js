@@ -8,16 +8,9 @@ module.exports ={
         consent_required:'user authentication required.',
         interaction_required:'need to collect additional personal information.'
     },
-    error:(msg,param,value,err,resMsg,code)=>{
-        error.msg = resMsg;
-        error.detail = 
-                    {
-                        param:param,
-                        value:value,
-                        error:err,
-                        msg:msg,
-                        code:code
-                    };
+    error:(error,error_description)=>{
+        error.error = error;
+        error.error_description = error_description;
         error.result = false;
         return error;
     }

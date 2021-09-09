@@ -8,9 +8,9 @@ const hash          = require('../../../middlewares/hashFnc');
 const resMsg        = require('../../../utils/responseMssage');
 const express       = require('express');
 const router        = express.Router();
+const ctIdVaildator = require('../../../middlewares/authorization');
 
-
-router.get('/authorize',(req,res)=>{
+router.get('/authorize',ctIdVaildator.clientIdCheck,(req,res)=>{
     var redirect_uri = undefined;
     if(req.query.redirect_uri !== undefined) redirect_uri = hash.encrypt(req.query.redirect_uri);
 
