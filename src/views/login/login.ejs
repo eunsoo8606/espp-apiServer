@@ -21,6 +21,10 @@
     var emailChk = false;
     var pwdChk = false;
     $(function(){
+        $("#post_btn").on("click",function(){
+            addressPopup();
+            return false;
+        });
         $("#remember-me").on('click',()=>{
             
         if($("input:checkbox[id='ID']").is(":checked") == true) $(this).val("yes");
@@ -40,6 +44,7 @@
 
         $("#email").on('focusout',()=>{
             var email = Util.get($("#email").val());
+            $(".emailErr").css('display','none');
                 if(email === ""){ 
                     $("#msg4").css('display','block');
                     emailChk = false;
@@ -102,7 +107,7 @@
 
         $("#signup").on('click',()=>{
             if(!nickChk){
-                alert("이름을 확인해 주세요.");
+                alert("별명을 확인해 주세요.");
                 $("#nickname").focus();
                 return false;
             }
@@ -114,6 +119,15 @@
             if(!pwdChk){
                 alert("비밀번호를 확인해 주세요.");
                 return false;
+            }
+            if(Util.get($("#post").val()) != ""){
+                $("#hiddenPost").val($("#post").val());
+            }
+            if(Util.get($("#addr1").val()) != ""){
+                $("#hiddenAddr1").val($("#addr1").val());
+            }
+            if(Util.get($("#addr2").val()) != ""){
+                $("#hiddenAddr2").val($("#addr2").val());
             }
             $("#register-form").submit();
         });
@@ -132,13 +146,13 @@
     function emailCheck(email){
         $(".emailErr").css("display","none");
         $.ajax({
-                url: "/user/userEmailCheck",
+                url: "/v1/mail/userEmailCheck",
                 type: "GET",
                 data: {'email':email},
                 dataType:"json",
                 async:false,
                 success: function (data) {
-                   if(data > 0){
+                   if(data.data > 0){
                        $("#msg6").css("display",'block');
                        emailChk = false;
                        return false;
@@ -167,11 +181,12 @@
                 <div class="signup-content">
                     <div class="signup-form">
                         <h2 class="form-title">Sign up</h2>
-                        <form method="POST" class="register-form" id="register-form" action="/auth/register_process">
+                        <form method="POST" class="register-form" id="register-form" action="/v1/user/regist">
+                            <input type="hidden" name="master" value="Y"/>
                             <div class="form-group">
                                 <label for="nickname"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="nickname" id="nickname" placeholder="Your Name"/>
-                                <span class="errMsg nickErr" id="msg1">이름을 입력해 주세요.</span>
+                                <input type="text" name="nickname" id="nickname" placeholder="Your nickName"/>
+                                <span class="errMsg nickErr" id="msg1">별명을 입력해 주세요.</span>
                                 <span class="sucMsg nickErr" id="msg3"><i class="zmdi zmdi-check-all"></i> Success!</span>
                             </div>
                             
@@ -186,12 +201,12 @@
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
                                 <input type="password" name="pwd" id="pass" placeholder="Password"/>
-                                    <span class="defaultMsg pwdErr" >6~16자의 영문/숫자/특수기호 조합</span>
-                                    <span class="errMsg pwdErr" id="msg9">비밀번호 길이 형식에 맞지 않습니다. 6~16자 사이로 입력해 주세요.</span>
-                                    <span class="errMsg pwdErr" id="msg10">비밀번호 형식에 맞지 않습니다. 6~16자의 영문/숫자/특수기호 조합이어야 합니다.</span>
-                                    <span class="sucMsg pwdErr" id="msg11"><i class="zmdi zmdi-check-all"></i> Success!</span>
-                                    <span class="errMsg pwdErr" id="msg12">비밀번호 를 입력해 주세요.</span>
                             </div>
+                            <span class="defaultMsg pwdErr" >6~16자의 영문/숫자/특수기호 조합</span>
+                            <span class="errMsg pwdErr" id="msg9">비밀번호 길이 형식에 맞지 않습니다. 6~16자 사이로 입력해 주세요.</span>
+                            <span class="errMsg pwdErr" id="msg10">비밀번호 형식에 맞지 않습니다. 6~16자의 영문/숫자/특수기호 조합이어야 합니다.</span>
+                            <span class="sucMsg pwdErr" id="msg11"><i class="zmdi zmdi-check-all"></i> Success!</span>
+                            <span class="errMsg pwdErr" id="msg12">비밀번호 를 입력해 주세요.</span>
                             <div class="form-group">
                                 <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
                                 <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password"/>
@@ -200,8 +215,19 @@
                                 <span class="errMsg rePwdErr" id="msg15">비밀번호 확인을 입력해 주세요.</span>
                             </div>
                             <div class="form-group">
-                                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                                <label for="agree-term" class="label-agree-term"><span><span></span></span>서비스 약관에<a href="#" class="term-service"> 동의합니다.</a></label>
+                                <label for="post"><button id="post_btn" class="add_htn">우편번호 검색</button></label>
+                                <input type="text" id="post" style="text-align: center;"disabled/>
+                                <input type="hidden" name="post" id="hiddenPost" style="text-align: center;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="addr1"><i class="zmdi zmdi-store zmdi-hc-lg"></i></label>
+                                <input type="text" id="addr1" placeholder="일반 주소" disabled/>
+                                <input type="hidden" name="addr1" id="hiddenAddr1" style="text-align: center;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="addr2"><i class="zmdi zmdi-store zmdi-hc-lg"></i></label>
+                                <input type="text" id="addr2" placeholder="상세 주소"/>
+                                <input type="hidden" name="addr2" id="hiddenAddr2" style="text-align: center;"/>
                             </div>
                             <div class="form-group form-button">
                                 <input type="submit" name="signup" id="signup" class="form-submit" value="가입하기"/>
@@ -232,14 +258,9 @@
                                 <label for="login-email"><i class="zmdi zmdi-account material-icons-name"></i></label>
                                 <input type="email" name="email" id="login-email" placeholder="Your Email"/>
                             </div>
-                            
                             <div class="form-group">
                                 <label for="login-pwd"><i class="zmdi zmdi-lock"></i></label>
                                 <input type="password" name="pwd" id="login-pwd" placeholder="Password"/>
-                            </div>
-                            <div class="form-group">
-                                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
-                                <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
                             </div>
                             <div class="form-group form-button">
                                 <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>

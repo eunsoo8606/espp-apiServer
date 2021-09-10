@@ -1,7 +1,9 @@
-const mysqlConObj = require('../../../../config/mysql');
-const resMsg = require('../../../../utils/responseMssage');
-const success = require('../../../../utils/success');
-const stCd = require('../../../../utils/statusCode');
+const mysqlConObj   = require('../../../../config/mysql');
+const resMsg        = require('../../../../utils/responseMssage');
+const success       = require('../../../../utils/success');
+const stCd          = require('../../../../utils/statusCode');
+const userQs        = require('../query/user.query');
+const errors        = require('../../../../utils/error');
 module.exports = {
     userSelectOne: (memberSeq) =>{
         return new Promise((resolve,reject)=>{
@@ -22,5 +24,31 @@ module.exports = {
             });
 
         })
+    },
+    insertUser:(user,res)=>{
+        return new Promise((resolve,reject)=>{
+            const db = mysqlConObj.init();
+            db.beginTransaction();
+
+            db.query(userQs.INSERT,user,function(err,results,fields){
+                console.log("result = ", results);
+                if (err !== undefined && err !== null) {
+                    console.log("init...",err)
+                    db.rollback();
+                    db.end();
+                    res.render("error/error.ejs",{status:stCd.DB_ERROR,message: err.sqlMessage});
+                    return false;
+                }
+                if(results.affectedRows === 0){
+                    db.rollback();
+                    db.end();
+                    res.render("error/error.ejs",{status:stCd.UNAUTHORIZED,message: 'INSERT FAILAD..'});
+                    return false;
+                }
+                db.commit();
+                db.end();
+                return resolve(results.affectedRows);
+            });
+        });
     }
 }

@@ -600,17 +600,36 @@ label.valid {
   margin-left: 15px;
   color:red;
   font-weight: bold;
-  position: fixed;
+  position: relative;
+  top: -22px;
+}
+.nickErr{
+  top:2px !important;
+}
+.emailErr{
+  top:2px !important;
+}
+.rePwdErr{
+  top:2px !important;
 }
 .defaultMsg {
   margin-left: 15px;
   color:gray;
   position: fixed;
 }
+.add_htn{
+  border: none;
+  background: #4292dc;
+  color: white;
+  border-radius: 5px;
+  height: 30px;
+}
 .sucMsg{
   margin-left: 15px;
   color:green;
-  position: fixed;
+    margin-bottom: 3px;
+    position: relative;
+    top: -22px;
 }
 #msg1,#msg2,#msg3,#msg4,#msg5,#msg6,#msg7,#msg8,#msg9,#msg10,#msg11,#msg12,#msg13,#msg14,#msg15{
   display: none;

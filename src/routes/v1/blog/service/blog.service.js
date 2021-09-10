@@ -142,7 +142,7 @@ module.exports = {
             db.query(blogQs.TOP3,memberSeq, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
-                    res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','BAD REQUEST..'));
+                    res.send(errors.error(resMsg.BAD_REQUEST,'DB ERROR..'));
                     db.end();
                     return false;
                 }

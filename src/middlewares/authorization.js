@@ -138,8 +138,12 @@ module.exports = {
         });// new Promise Close
     },
     tokenValidator:(req,res,next)=>{
-        var reqToken = req.headers.authorization;
 
+        if(req.body.master !== undefined){
+            return next();
+        }
+
+        var reqToken = req.headers.authorization;
         if(reqToken === undefined || reqToken === ''){
             reqToken = 'undefined';
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_TOKEN,'TOKEN NOTFOUND'));
@@ -165,7 +169,6 @@ module.exports = {
             res.end();
             return false;
         }
-        
         req.query.id = result.memberSeq;
 
         return next();

@@ -40,7 +40,9 @@ router.post('/login_process',async (req,res)=>{
     });
 });
 
-
+router.get("/address",(req,res)=>{
+    res.render("address/jusoPopup.ejs");
+});
 
 
 module.exports = router;

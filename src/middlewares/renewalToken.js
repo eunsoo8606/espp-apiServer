@@ -18,7 +18,7 @@ module.exports = {
         }
         return new Promise((resolve,reject)=>{
             userService.userSelectOne(data.memberSeq).then((user)=>{
-                token.sign(user).then((tok)=>{
+                token.sign(user.data).then((tok)=>{
                     return resolve(token.json_token(user,tok ,'','N'));
                 })
             });
