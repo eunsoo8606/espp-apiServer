@@ -17,19 +17,19 @@ module.exports ={
             db.query(query, function (err, results, fields) {
                 // 회원정보 조회 결과
                 if (err !== undefined && err !== null) {
-                  res.send(errors.error(resMsg.DB_ERROR,'pwd','','DB Error',err));
+                  res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.DB_ERROR,err));
                   return false;
                 }
                   
                 if(results.length == 0){
-                   resolve(errors.error(resMsg.LOGIN_FIALD,'pwd','','Login Error','USER NOT FOUND..'));
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.ACCESS_DENIED,'USER NOT FOUND..'));
                    return false;
                 }
 
                 var user = results[0];
-                pwd = hash.sha256_base64(pwd);
+                pwd      = hash.sha256_base64(pwd);
                 if(user.PWD !== pwd) {
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.LOGIN_FIALD,'pwd','','Login Error','UNAUTHORIZAED USER..'));
+                    res.status(stCd.FORBIDDEN).send(errors.error(resMsg.ACCESS_DENIED,'UNAUTHORIZAED USER..'));
                     return  false;
                 }
 
