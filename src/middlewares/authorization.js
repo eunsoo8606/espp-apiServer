@@ -105,17 +105,17 @@ module.exports = {
         if(reflreshToken !== undefined) return next();
 
 
-        var authorizationCode = req.body.authorizationCode;
+        var authorizationCode = req.body.code;
         if(authorizationCode === undefined){
-            res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','CODE NOT FOUND..'));
+            res.send(errors.error(resMsg.BAD_REQUEST,'CODE NOT FOUND..'));
             return false;
         }
         appService.getAuthApp(authorizationCode,res).then((data)=>{
             if(data.error !== undefined){
-                res.status(stCd.BAD_REQUEST).send(data);
+                res.status(stCd.DB_ERROR).send(data);
                 return false;
             }
-            req.body.memberSeq = data.MEMBER_SEQ;
+            req.query.memberSeq = data.MEMBER_SEQ;
             next();
         });
     },

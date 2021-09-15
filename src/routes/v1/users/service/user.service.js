@@ -9,7 +9,7 @@ module.exports = {
         return new Promise((resolve,reject)=>{
             const db = mysqlConObj.init();
             
-            var query = `SELECT *
+            var query = `SELECT MEMBER_SEQ,EMAIL,NICK_NAME,MEMBER_GROUP,POST,ADDR1,ADDR2
                          FROM MEMBER 
                          WHERE MEMBER_SEQ = ${memberSeq}`;
             console.log('query : ', query);

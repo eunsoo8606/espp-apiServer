@@ -9,11 +9,11 @@ module.exports = {
     //비정상이면 에러 response
     getRefreshToken:(data,res)=>{
         if(data === 'TOKEN_INVALID'){
-            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,'token','','TOKEN ERROR',data));
+            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,data));
             return false;
         }
         if(data === 'TOKEN_EXPIRED'){
-            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EXPIRED_TOKEN,'token','','TOKEN ERROR',data));
+            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EXPIRED_TOKEN,data));
             return false;
         }
         return new Promise((resolve,reject)=>{

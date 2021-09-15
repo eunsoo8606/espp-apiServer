@@ -28,7 +28,7 @@ router.get('/authorize',ctIdVaildator.clientIdCheck,(req,res)=>{
 
 router.post('/token',auth.checkAuthorizationCode,async (req,res)=>{
     console.log("token init....")
-    var memberSeq  = req.body.memberSeq;
+    var memberSeq  = req.query.memberSeq;
     var grant_type = req.body.grant_type;
 
     if(grant_type === 'refresh_token'){

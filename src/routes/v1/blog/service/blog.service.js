@@ -34,11 +34,12 @@ module.exports = {
     selectList: (blog,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
-            console.log(" query : ", blogQs.LIST(blog.title,blog.content))
-            db.query(blogQs.LIST(blog.title,blog.content),common(blog), function (err, results, fields) {
+            console.log(" query : ", blogQs.LIST(blog.title,blog.content,blog.memberSeq));
+            console.log("query value : ", common(blog))
+            db.query(blogQs.LIST(blog.title,blog.content,blog.memberSeq,blog.firstIndex),common(blog), function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
-                    res.send(errors.error(resMsg.BAD_REQUEST,'ERROR : ',err,'APPLICATION ERROR','BAD REQUEST..'));
+                    res.send(errors.error(resMsg.DB_ERROR,'DATABASE ERROR..'));
                     db.end();
                     return false;
                 }
@@ -71,7 +72,7 @@ module.exports = {
             db.query(blogQs.SELECTONE,blogSeq, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
-                    res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','BAD REQUEST..'));
+                    res.send(errors.error(resMsg.DB_ERROR,err));
                     db.end();
                     return false;
                 }

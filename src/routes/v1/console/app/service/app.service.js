@@ -16,7 +16,7 @@ module.exports = {
             db.query(query, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
-                    res.send(errors.error(resMsg.BAD_REQUEST,'AuthorizationCode',authorizationCode,'APPLICATION ERROR','BAD REQUEST..'));
+                    res.send(errors.error(resMsg.BAD_REQUEST,'DATABASE ERROR..'));
                     db.end();
                     return false;
                 }
