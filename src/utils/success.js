@@ -15,5 +15,10 @@ module.exports = {
         success.etc  = etc;
 
         return success;
+    },
+    success_status:(state)=>{
+        success.state = state;
+        success.providor = process.env.providor;
+        return success;
     }
 }

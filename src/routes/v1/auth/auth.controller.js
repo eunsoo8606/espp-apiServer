@@ -48,5 +48,12 @@ router.post('/token',auth.checkAuthorizationCode,async (req,res)=>{
     });
 });
 
+
+router.get("token/status",(req,res)=>{
+    var tokenState = auth.checkToken(req.headers.authorization);
+    res.send(tokenState);
+});
+
+
 module.exports = router;
 

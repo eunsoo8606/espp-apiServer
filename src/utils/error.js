@@ -1,6 +1,6 @@
 const stCd      = require('./statusCode');
 const resMsg    = require('./responseMssage');
-var error       = {};
+var errors       = {};
 module.exports ={
     ERROR:{
         login_required:'user authentication required.',
@@ -9,9 +9,9 @@ module.exports ={
         interaction_required:'need to collect additional personal information.'
     },
     error:(error,error_description)=>{
-        error.error = error;
-        error.error_description = error_description;
-        error.result = false;
-        return error;
+        errors.error = error;
+        errors.error_description = error_description;
+        errors.result = false;
+        return errors;
     }
 }

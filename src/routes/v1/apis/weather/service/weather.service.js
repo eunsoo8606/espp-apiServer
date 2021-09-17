@@ -13,7 +13,6 @@ module.exports = {
                     res.end();
                     return false;
                 }
-                console.log("results[0] :", results)
                 resolve(results[0]);
             });
         });

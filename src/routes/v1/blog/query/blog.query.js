@@ -1,5 +1,5 @@
 module.exports={
-    INSERT : 'INSERT INTO BLOG (MEMBER_SEQ,MAIN_IMG,TITLE,CONTENT,REGP_IP,REGP_SEQ)VALUES(?,?,?,?,?,?)',
+    INSERT : 'INSERT INTO BLOG (MEMBER_SEQ,MAIN_IMG,TITLE,CONTENT,REGP_IP,REGP_SEQ,CATEGORY)VALUES(?,?,?,?,?,?,?)',
     DELETE : 'DELETE FROM BLOG WHERE BLOG_SEQ = ?',
     UPDATE : 'UPDATE BLOG SET TITLE = ?, CONTENT = ?, MAIN_IMG = ?, MDFP_IP =? ,MDFP_SEQ = ?, MDF_DTTM = NOW() WHERE BLOG_SEQ = ?',
     LIST   :(title,content,memberSeq,firstIndex)=>{ 
@@ -20,11 +20,12 @@ module.exports={
 
                    return list;
             },
-    TOTAL  : `SELECT COUNT(*) as COUNT FROM BLOG WHERE MEMBER_SEQ = ?`,
-    SELECTONE:`SELECT  BLOG_SEQ,MAIN_IMG,TITLE,REG_DTTM,CONTENT FROM BLOG WHERE BLOG_SEQ = ?`,
-    TOP3:`SELECT *
+    TOTAL     : (memberSeq)=>{return `SELECT COUNT(*) as COUNT FROM BLOG ${(memberSeq !== "" && memberSeq !== undefined?"WHERE MEMBER_SEQ = ?":"")}`;},
+    SELECT_ONE : `SELECT  BLOG_SEQ,MAIN_IMG,TITLE,MEMBER_SEQ,REG_DTTM,CONTENT FROM BLOG WHERE BLOG_SEQ = ?`,
+    TOP3      :(memberSeq)=>{
+        return `SELECT *
             FROM BLOG
-           WHERE MEMBER_SEQ = ?
+           ${(memberSeq !== "" && memberSeq !== undefined?"WHERE MEMBER_SEQ = ?":"")}
         ORDER BY REG_DTTM DESC
-           LIMIT 0,3`
+           LIMIT 0,3`;}
 }

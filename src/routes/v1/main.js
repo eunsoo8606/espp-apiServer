@@ -12,6 +12,6 @@ router.use("/console",auth.tokenValidator,consoleRouter);
 router.use("/user",auth.tokenValidator,userRouter);
 router.use("/login",loginRouter);
 router.use("/apis",apisRouter);
-router.use("/blog",auth.tokenValidator,blogRouter);
+router.use("/blog",blogRouter);
 router.use("/mail",mailRouter);
 module.exports = router;

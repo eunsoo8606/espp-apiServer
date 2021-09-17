@@ -5,6 +5,7 @@ const hash        = require('../middlewares/hashFnc');
 const stCd        = require('../utils/statusCode');
 const mysqlConObj = require('../config/mysql');
 const errors      = require('../utils/error');
+const success     = require('../utils/success');
 const token       = require('./token');
 // var requestIp     = require('request-ip');
 require('dotenv').config();
@@ -145,7 +146,6 @@ module.exports = {
 
         var reqToken = req.headers.authorization;
         if(reqToken === undefined || reqToken === ''){
-            reqToken = 'undefined';
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_TOKEN,'TOKEN NOTFOUND'));
             res.end();
             return false;
@@ -160,6 +160,7 @@ module.exports = {
         reqToken = tokenCategory[1];
         var result = token.verify(reqToken);
         if(result === 'TOKEN_INVALID') {
+            console.log("init... TOKEN_INVALID",errors.error(resMsg.INVALID_TOKEN,'Invalid token'))
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,'Invalid token'));
             res.end();
             return false;
@@ -169,8 +170,33 @@ module.exports = {
             res.end();
             return false;
         }
+        console.log("result : ", result);
         req.query.id = result.memberSeq;
 
         return next();
+    },
+    checkToken:(token)=>{
+        var reqToken      = token;
+        var tokenCategory = reqToken.split(' ');
+        reqToken          = tokenCategory[1];
+        var result        = token.verify(reqToken);
+
+        if(reqToken === undefined || reqToken === ''){
+            return errors.error(resMsg.EMPTY_TOKEN,'TOKEN NOTFOUND');
+        }
+
+        if(tokenCategory[0] !== 'Bearer'){
+            return errors.error(resMsg.BAD_REQUEST,'Invalid header type');
+        }
+
+        if(result === 'TOKEN_INVALID') {
+            return errors.error(resMsg.INVALID_TOKEN,'Invalid token');
+        }
+
+        if(result === 'TOKEN_EXPIRED') {
+            return errors.error(resMsg.EXPIRED_TOKEN,'Invalid token');
+        }
+        
+        return success.success_status('normal');
     }
 }

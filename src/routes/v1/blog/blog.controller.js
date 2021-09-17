@@ -7,15 +7,19 @@ const blogVo        = require('./vo/blog.vo');
 const stCd          = require('../../../utils/statusCode');
 const resMsg        = require('../../../utils/responseMssage');
 const success       = require('../../../utils/success');
+const auth          = require("../../../middlewares/authorization");
+const error         = require("../../../utils/error");
+const token         = require('../../../middlewares/token');
 
 
-router.post('/write',(req,res)=>{
+router.post('/write',auth.tokenValidator,(req,res)=>{
     var title      = req.body.title;
     var content    = req.body.content;
     var memberSeq  = req.query.id;
     var mainImg    = req.body.mainImg;
+    var category   = req.body.category;
     var ip         = requestIp.getClientIp(req);
-    blogService.insert(blogVo.blog(memberSeq,mainImg,title,content,ip,memberSeq),res).then((data)=>{
+    blogService.insert(blogVo.blog(memberSeq,mainImg,title,content,ip,memberSeq,category),res).then((data)=>{
         if(data > 0){
             res.status(stCd.CREATED).send(success.success_json(resMsg.CREATED,data,true));
             res.end();
@@ -23,13 +27,18 @@ router.post('/write',(req,res)=>{
     });
 });
 router.get('/list',async(req,res)=>{
-    console.log("list init....",req.query.id);
+    console.log("list init....",req.query);
     var blog           = {cpage:req.query.cpage,selectSize:req.query.selectSize,title:req.query.title,content:req.query.content,limit:req.query.limit,memberSeq:req.query.id};
     var scope          = req.query.scope;
-    console.log("scope : ", scope);
-    console.log("scope.indexOf : ", scope.indexOf(","));
+
     if(scope.indexOf(",") > -1){
-        var categoty = scope.split(",");
+        var categoty       = scope.split(",");
+        var reqToken       = req.headers.authorization;
+        var tokenCategory  = reqToken.split(' ');
+        reqToken           = tokenCategory[1];
+        var result         = token.verify(reqToken);
+        blog.memberSeq     = result.memberSeq;
+
         switch(categoty[0]){
             case 'list': await list(blog,res); break;
             case 'paging': await pagingList(blog,res); break;
@@ -53,14 +62,14 @@ router.get('/list',async(req,res)=>{
         });
     });
 
-    router.delete("/detail",(req,res)=>{
+    router.delete("/detail",auth.tokenValidator,(req,res)=>{
         var blogSeq= req.query.blogSeq;
         blogService.deleteBlog(blogSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });
     });
 
-    router.put("/detail",(req,res)=>{
+    router.put("/detail",auth.tokenValidator,(req,res)=>{
         var title      = req.body.title;
         var content    = req.body.content;
         var memberSeq  = req.query.id;
@@ -76,7 +85,15 @@ router.get('/list',async(req,res)=>{
     });
     router.get("/top3",(req,res)=>{
         var memberSeq = req.query.id;
-        console.log("top3 init..", memberSeq);
+        var scope     = req.query.scope;
+        console.log("scope : ", scope);
+        if(scope === undefined) {
+            res.send(error.error(resMsg.BAD_REQUEST,'not found scope..'));
+            return false;
+        }
+
+        if(scope  == "list") memberSeq = "";
+
         blogService.selectBlogTop3(memberSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });
@@ -101,7 +118,7 @@ async function pagingList(blog,res){
         console.log("total count = ", data);
         totalCount         = data;
         totalPageCount     = pagination.getTotalPageCount(totalCount,blog.limit);
-        blog.F    = pagination.firstIndex(blog.cpage,blog.limit);
+        blog.firstIndex    = pagination.firstIndex(blog.cpage,blog.limit);
 
         if(blog.selectSize === undefined)
         blog.lastIndex     = pagination.lastIndex(blog.cpage,blog.limit);

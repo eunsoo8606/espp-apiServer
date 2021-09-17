@@ -51,7 +51,7 @@ module.exports = {
     totalCount: (memberSeq,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
-            db.query(blogQs.TOTAL,memberSeq, function (err, results, fields) {
+            db.query(blogQs.TOTAL(memberSeq),memberSeq, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
                     console.log("err : ", err);
@@ -69,7 +69,7 @@ module.exports = {
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
      
-            db.query(blogQs.SELECTONE,blogSeq, function (err, results, fields) {
+            db.query(blogQs.SELECT_ONE,blogSeq, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
                     res.send(errors.error(resMsg.DB_ERROR,err));
@@ -139,8 +139,8 @@ module.exports = {
     selectBlogTop3:(memberSeq,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
-     
-            db.query(blogQs.TOP3,memberSeq, function (err, results, fields) {
+            console.log("top3 query : ", blogQs.TOP3(memberSeq))
+            db.query(blogQs.TOP3(memberSeq),memberSeq, function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
                     res.send(errors.error(resMsg.BAD_REQUEST,'DB ERROR..'));
