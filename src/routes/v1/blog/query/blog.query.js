@@ -1,5 +1,5 @@
 module.exports={
-    INSERT : 'INSERT INTO BLOG (MEMBER_SEQ,MAIN_IMG,TITLE,CONTENT,REGP_IP,REGP_SEQ,CATEGORY)VALUES(?,?,?,?,?,?,?)',
+    INSERT : 'INSERT INTO BLOG (MEMBER_SEQ,MAIN_IMG,TITLE,CONTENT,REGP_IP,REGP_SEQ,CATEGORY,REG_DTTM)VALUES(?,?,?,?,?,?,?)',
     DELETE : 'DELETE FROM BLOG WHERE BLOG_SEQ = ?',
     UPDATE : 'UPDATE BLOG SET TITLE = ?, CONTENT = ?, MAIN_IMG = ?, MDFP_IP =? ,MDFP_SEQ = ?, MDF_DTTM = NOW() WHERE BLOG_SEQ = ?',
     LIST   :(title,content,memberSeq,firstIndex)=>{ 
@@ -8,8 +8,9 @@ module.exports={
                                    BLOG_SEQ,
                                    MAIN_IMG,
                                    TITLE,
-                                   REG_DTTM,
-                                   CONTENT
+                                   DATE_FORMAT(REG_DTTM,"%Y-%m-%d") as REG_DTTM,
+                                   CONTENT,
+                                   COUNT
                               FROM BLOG, (SELECT @rownum:=0) TMP
                              WHERE 1=1
                    ${(memberSeq !== undefined && memberSeq !== '') ? 'AND MEMBER_SEQ = ?':''}
@@ -21,11 +22,31 @@ module.exports={
                    return list;
             },
     TOTAL     : (memberSeq)=>{return `SELECT COUNT(*) as COUNT FROM BLOG ${(memberSeq !== "" && memberSeq !== undefined?"WHERE MEMBER_SEQ = ?":"")}`;},
-    SELECT_ONE : `SELECT  BLOG_SEQ,MAIN_IMG,TITLE,MEMBER_SEQ,REG_DTTM,CONTENT FROM BLOG WHERE BLOG_SEQ = ?`,
+    SELECT_ONE : `
+                  SELECT  a.BLOG_SEQ,
+                          a.MAIN_IMG,
+                          a.TITLE,
+                          a.MEMBER_SEQ,
+                          DATE_FORMAT(a.REG_DTTM,"%Y-%m-%d") as REG_DTTM,
+                          a.CONTENT ,
+                          b.NICK_NAME,
+                          a.COUNT
+                    FROM BLOG a, MEMBER b
+                   WHERE BLOG_SEQ = ?
+                     AND a.MEMBER_SEQ = b.MEMBER_SEQ`,
     TOP3      :(memberSeq)=>{
         return `SELECT *
             FROM BLOG
            ${(memberSeq !== "" && memberSeq !== undefined?"WHERE MEMBER_SEQ = ?":"")}
         ORDER BY REG_DTTM DESC
-           LIMIT 0,3`;}
+           LIMIT 0,3`;},
+    COUNT     :`UPDATE BLOG SET COUNT = COUNT +1 WHERE BLOG_SEQ = ?`,
+    COMMENTS : `SELECT DATE_FORMAT(A.REG_DTTM,'%y.%m.%d %H:%m') AS REG_DTTM,
+                        B.NICK_NAME,
+                        A.TEXT,
+                        A.COMMENT_SEQ,
+                        A.AUTHOR_SEQ
+                  FROM COMMENT A,MEMBER B
+                 WHERE BLOG_SEQ = ?
+                   AND A.AUTHOR_SEQ = B.MEMBER_SEQ`
 }

@@ -10,7 +10,7 @@ const success       = require('../../../utils/success');
 const auth          = require("../../../middlewares/authorization");
 const error         = require("../../../utils/error");
 const token         = require('../../../middlewares/token');
-
+const comment       = require("./vo/comment.vo");
 
 router.post('/write',auth.tokenValidator,(req,res)=>{
     var title      = req.body.title;
@@ -31,7 +31,7 @@ router.get('/list',async(req,res)=>{
     var blog           = {cpage:req.query.cpage,selectSize:req.query.selectSize,title:req.query.title,content:req.query.content,limit:req.query.limit,memberSeq:req.query.id};
     var scope          = req.query.scope;
 
-    if(scope.indexOf(",") > -1){
+    if(scope !== undefined && scope.indexOf(",") > -1){
         var categoty       = scope.split(",");
         var reqToken       = req.headers.authorization;
         var tokenCategory  = reqToken.split(' ');
@@ -98,6 +98,56 @@ router.get('/list',async(req,res)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });
     });
+
+    router.post('/count',(req,res)=>{
+        var blogSeq = req.body.blogSeq;
+        blogService.count(blogSeq).then((data)=>{
+            if(data > 0){
+                res.status(stCd.CREATED).send(success.success_json(resMsg.SUCCESS_REQUEST,data,true));
+                res.end();
+            }
+        });
+    });
+
+    router.get("/detail/comments",(req,res)=>{
+        console.log("detail init....")
+        var blogSeq= req.query.blogSeq;
+        blogService.selectComments(blogSeq,res).then((data)=>{
+            res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
+        });
+    });
+    router.post("/detail/comments",(req,res)=>{
+        console.log("detail init....")
+        var blogSeq     = req.body.blogSeq;
+        var authSeq     = req.body.authSeq;
+        var text        = req.body.text;
+        var parentSeq   = req.body.parentSeq;
+        blogService.insertComment(comment.comment(blogSeq,authSeq,text),parentSeq,res).then((data)=>{
+            if(data > 0){
+                res.status(stCd.CREATED).send(success.success_json(resMsg.SUCCESS_REQUEST,data,true));
+                res.end();
+            }
+        });
+    });
+    router.delete("/detail/comments",auth.tokenValidator,(req,res)=>{
+        var blogSeq     = req.query.blogSeq;
+        var commentSeq  = req.query.commentSeq;
+        console.log("comment Seq : ", commentSeq);
+        blogService.deleteComment(comment.delete(blogSeq,commentSeq),res).then((data)=>{
+            res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
+        });
+    });
+
+    router.put("/detail/comments",auth.tokenValidator,(req,res)=>{
+        var blogSeq     = req.body.blogSeq;
+        var commentSeq  = req.body.commentSeq;
+        var text        = req.body.text;
+        console.log("comment Seq : ", commentSeq);
+        blogService.updateComment(comment.update(blogSeq,commentSeq,text),res).then((data)=>{
+            res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
+        });
+    });
+
 
 
 
