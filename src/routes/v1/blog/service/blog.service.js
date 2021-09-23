@@ -35,7 +35,7 @@ module.exports = {
     selectList: (blog,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
-            console.log(" query : ", blogQs.LIST(blog.title,blog.content,blog.memberSeq));
+            console.log(" query : ", blogQs.LIST(blog.title,blog.content,blog.memberSeq,blog.firstIndex));
             console.log("query value : ", common(blog))
             db.query(blogQs.LIST(blog.title,blog.content,blog.memberSeq,blog.firstIndex),common(blog), function (err, results, fields) {
                 //result Check
@@ -44,7 +44,6 @@ module.exports = {
                     db.end();
                     return false;
                 }
-                console.log("selectList : ",results);
                 db.end();
                 return resolve(results);
             });
@@ -149,18 +148,18 @@ module.exports = {
                     console.log("init...",err)
                     db.rollback();
                     db.end();
-                    res.send(errors.error(resMsg.BAD_REQUEST,'APP VALUE',data,'QUERY ERROR',err));
+                    res.send(errors.error(resMsg.DB_ERROR,err));
                     return false;
                 }
-                if(results.affectedRows === 0){
+                if(results === null && results === undefined){
                     db.rollback();
                     db.end();
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','INSERT Error','INSERT FAILAD..'));
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_VALUE,'Result Null..'));
                     return false;
                 }
                 db.commit();
                 db.end();
-                return resolve(results.affectedRows);
+                return resolve(results);
             });
         });
     },

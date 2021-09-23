@@ -145,6 +145,7 @@ module.exports = {
         }
 
         var reqToken = req.headers.authorization;
+
         if(reqToken === undefined || reqToken === ''){
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EMPTY_TOKEN,'TOKEN NOTFOUND'));
             res.end();
@@ -152,27 +153,35 @@ module.exports = {
         }
 
         var tokenCategory = reqToken.split(' ');
+
         if(tokenCategory[0] !== 'Bearer'){
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.BAD_REQUEST,'Invalid header type'));
             res.end();
             return false;
         }
+
         reqToken = tokenCategory[1];
         var result = token.verify(reqToken);
+
         if(result === 'TOKEN_INVALID') {
-            console.log("init... TOKEN_INVALID",errors.error(resMsg.INVALID_TOKEN,'Invalid token'))
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INVALID_TOKEN,'Invalid token'));
             res.end();
             return false;
         }
+
         if(result === 'TOKEN_EXPIRED') {
             res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.EXPIRED_TOKEN,'Invalid token'));
             res.end();
             return false;
         }
-        console.log("result : ", result);
-        req.query.id = result.memberSeq;
+        userService.userSelectOne(result.memberSeq).then((data)=>{
+            if(data.LOGIN_STATE == "N"){
+                res.status(stCd.FORBIDDEN).send(errors.error(resMsg.ACCESS_DENIED,'please check your login state..'));
+            }
+        });
 
+        req.query.id    = result.memberSeq;
+        
         return next();
     },
     checkToken:(token)=>{

@@ -35,8 +35,13 @@ module.exports={
                    WHERE BLOG_SEQ = ?
                      AND a.MEMBER_SEQ = b.MEMBER_SEQ`,
     TOP3      :(memberSeq)=>{
-        return `SELECT *
-            FROM BLOG
+        return `SELECT DATE_FORMAT(REG_DTTM,'%y.%m.%d') AS REG_DTTM,
+                       BLOG_SEQ,
+                       MAIN_IMG,
+                       TITLE,
+                       CONTENT,
+                       COUNT 
+                  FROM BLOG
            ${(memberSeq !== "" && memberSeq !== undefined?"WHERE MEMBER_SEQ = ?":"")}
         ORDER BY REG_DTTM DESC
            LIMIT 0,3`;},
@@ -45,7 +50,9 @@ module.exports={
                         B.NICK_NAME,
                         A.TEXT,
                         A.COMMENT_SEQ,
-                        A.AUTHOR_SEQ
+                        A.AUTHOR_SEQ,
+                        A.COMMENT_LEVEL,
+                        A.PARENT_COMMENT_SEQ
                   FROM COMMENT A,MEMBER B
                  WHERE BLOG_SEQ = ?
                    AND A.AUTHOR_SEQ = B.MEMBER_SEQ`

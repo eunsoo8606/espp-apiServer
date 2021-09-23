@@ -1,0 +1,3 @@
+module.exports={
+    STATE:`UPDATE MEMBER SET LOGIN_STATE = ? WHERE MEMBER_SEQ = ?`
+}

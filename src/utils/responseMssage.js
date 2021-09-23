@@ -14,6 +14,7 @@ module.exports ={
         UPDATE_FAILD:           '업데이트에 실패 하였습니다.',
         INSERT_FAILD:           '등록에 실패 하였습니다.',
         REDIRECT_BAD:           '등록된 리디렉션이 없거나 일치하지 않습니다.',
-        SUCCESS_REQUEST:        'SUCCCESS REQUEST!'
+        SUCCESS_REQUEST:        'SUCCCESS REQUEST!',
+        REQUEST_FAILD:          'request faild'
 
 }

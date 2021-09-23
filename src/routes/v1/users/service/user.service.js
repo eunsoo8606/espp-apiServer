@@ -12,6 +12,7 @@ module.exports = {
             var query = `SELECT MEMBER_SEQ,EMAIL,NICK_NAME,MEMBER_GROUP,POST,ADDR1,ADDR2
                          FROM MEMBER 
                          WHERE MEMBER_SEQ = ${memberSeq}`;
+            
             console.log('query : ', query);
             db.query(query, function (err, results, fields) {
                // 회원정보 조회 결과
@@ -29,7 +30,6 @@ module.exports = {
         return new Promise((resolve,reject)=>{
             const db = mysqlConObj.init();
             db.beginTransaction();
-
             db.query(userQs.INSERT,user,function(err,results,fields){
                 console.log("result = ", results);
                 if (err !== undefined && err !== null) {

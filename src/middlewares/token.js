@@ -19,11 +19,11 @@ const reOption = {
 
 module.exports = {
         sign: async(user) => {
-            console.log(" : ", acOption)
             /* 현재는 idx와 email을 payload로 넣었지만 필요한 값을 넣으면 됨! */
             const payload = {
                 memberSeq: user.MEMBER_SEQ,
                 email: user.EMAIL
+                
             };
             //jwt.sign('token내용', 'JWT secretkey')
             const token = jwt.sign(payload, process.env.secretKey,acOption);
@@ -66,5 +66,11 @@ module.exports = {
             success.refresh_token_expires_in = process.env.RE_second;
             }
             return success;
+        },
+        clearToken:(token)=>{
+            if(token === undefined){
+                return "N";
+            }
+            
         }
 }

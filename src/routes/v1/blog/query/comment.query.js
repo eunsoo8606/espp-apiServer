@@ -7,13 +7,15 @@ module.exports={
                                 COMMENT_SEQ, 
                                 AUTHOR_SEQ,
                                 ${(parentSeq !== undefined)?'PARENT_COMMENT_SEQ,':''}
-                                TEXT
+                                TEXT,
+                                COMMENT_LEVEL
                                 )
                         VALUES(
                                 ?,
                                 (SELECT IFNULL((MAX(COMMENT_SEQ)),0)+1 FROM COMMENT a),
                                 ?,
                                 ${(parentSeq !== undefined)?'?,':''}
+                                ?,
                                 ?
                                )`;
                         },

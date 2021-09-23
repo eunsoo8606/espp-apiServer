@@ -11,6 +11,7 @@ const auth          = require("../../../middlewares/authorization");
 const error         = require("../../../utils/error");
 const token         = require('../../../middlewares/token');
 const comment       = require("./vo/comment.vo");
+const common       = require("../common/common.vo");
 
 router.post('/write',auth.tokenValidator,(req,res)=>{
     var title      = req.body.title;
@@ -55,7 +56,7 @@ router.get('/list',async(req,res)=>{
 
 
     router.get("/detail",(req,res)=>{
-        console.log("detail init....")
+        
         var blogSeq= req.query.blogSeq;
         blogService.selectOne(blogSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
@@ -110,19 +111,21 @@ router.get('/list',async(req,res)=>{
     });
 
     router.get("/detail/comments",(req,res)=>{
-        console.log("detail init....")
+   
         var blogSeq= req.query.blogSeq;
         blogService.selectComments(blogSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });
     });
     router.post("/detail/comments",(req,res)=>{
-        console.log("detail init....")
+        
         var blogSeq     = req.body.blogSeq;
         var authSeq     = req.body.authSeq;
         var text        = req.body.text;
         var parentSeq   = req.body.parentSeq;
-        blogService.insertComment(comment.comment(blogSeq,authSeq,text),parentSeq,res).then((data)=>{
+        var commetLevel = req.body.commentLevel == undefined? 1 : req.body.commentLevel;
+
+        blogService.insertComment(common.commonVO([blogSeq,authSeq,parentSeq,text,commetLevel]),parentSeq,res).then((data)=>{
             if(data > 0){
                 res.status(stCd.CREATED).send(success.success_json(resMsg.SUCCESS_REQUEST,data,true));
                 res.end();
@@ -165,16 +168,16 @@ async function pagingList(blog,res){
     var totalPageCount = 0;
     //내 블로그 작성글 전체 카운트
     blogService.totalCount(blog.memberSeq,res).then((data)=>{
-        console.log("total count = ", data);
         totalCount         = data;
-        totalPageCount     = pagination.getTotalPageCount(totalCount,blog.limit);
-        blog.firstIndex    = pagination.firstIndex(blog.cpage,blog.limit);
+        var limit          = 10;
 
-        if(blog.selectSize === undefined)
-        blog.lastIndex     = pagination.lastIndex(blog.cpage,blog.limit);
-        else
-        blog.lastIndex     = pagination.lastIndex(blog.cpage,blog.selectSize);
-        
+        if(blog.selectSize !== undefined)
+        limit = blog.selectSize
+
+        blog.lastIndex     = pagination.lastIndex(blog.cpage,limit);
+        totalPageCount     = pagination.getTotalPageCount(totalCount,limit);
+        blog.firstIndex    = pagination.firstIndex(blog.cpage,limit);
+
         blogService.selectList(blog,res).then((data)=>{
             paging.totalpage    = parseInt(totalPageCount);
             paging.totalCount   = parseInt(totalCount);

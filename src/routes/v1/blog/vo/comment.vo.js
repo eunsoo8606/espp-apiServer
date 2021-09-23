@@ -1,7 +1,7 @@
 const { blog } = require("./blog.vo");
 
 module.exports = {
-    comment:(blogSeq,authSeq,text)=>{
+    comment:(blogSeq,authSeq,parentSeq,text)=>{
         return [blogSeq,authSeq,text];
     },
     delete:(blogSeq,commentSeq)=>{
