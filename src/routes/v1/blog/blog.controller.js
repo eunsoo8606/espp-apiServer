@@ -11,7 +11,7 @@ const auth          = require("../../../middlewares/authorization");
 const error         = require("../../../utils/error");
 const token         = require('../../../middlewares/token');
 const comment       = require("./vo/comment.vo");
-const common       = require("../common/common.vo");
+const common        = require("../common/common.vo");
 
 router.post('/write',auth.tokenValidator,(req,res)=>{
     var title      = req.body.title;

@@ -78,6 +78,7 @@ module.exports = {
     appDetail:(appSeq,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
+            console.log("appSeq : ", appSeq);
             db.query(app.SELECT_ONE,appSeq,function(err,results,fields){
                 console.log("result :", results)
                 if (err !== undefined && err !== null) {
@@ -87,9 +88,11 @@ module.exports = {
                     return false;
                 }
                 var app = results[0];
+               
                 if(app === undefined){
                     db.end();
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','SELECT Error','SELECT FAILAD..'));
+                    res.send(errors.error(resMsg.INSERT_FAILD,'SELECT FAILAD..'));
+                    return false;
                 }
                 db.end();
                 return resolve(app);
@@ -119,6 +122,31 @@ module.exports = {
                 db.end();
                 return resolve(results.affectedRows);
             });
+        });
+    },
+    updateApp:(apps,filePath,res)=>{
+        return new Promise((resolve,reject)=>{
+            var db = mysqlConObj.init();
+            db.beginTransaction();
+            db.query(app.UPDATE(filePath),apps,function(err,results,fields){
+                console.log("result :", results)
+                if (err !== undefined && err !== null) {
+                    console.log("init...",err)
+                    db.rollback();
+                    db.end();
+                    res.send(errors.error(resMsg.BAD_REQUEST,'APP VALUE',param,'QUERY ERROR',err));
+                    return false;
+                }
+                if(results.affectedRows === 0){
+                    db.rollback();
+                    db.end();
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','INSERT Error','INSERT FAILAD..'));
+                }
+                db.commit();
+                db.end();
+                return resolve(results.affectedRows);
+            });
+
         });
     }
 };
