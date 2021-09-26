@@ -3,6 +3,7 @@ const resMsg      = require('../../../../utils/responseMssage');
 const blogQs      = require('../query/blog.query');
 const mysqlConObj = require('../../../../config/mysql');
 const common      = require('../../common/common.vo').common;
+const commonVO    = require('../../common/common.vo').commonVO;
 const comQs       = require('../query/comment.query');
 const stCd        = require("../../../../utils/statusCode");
 
@@ -49,10 +50,13 @@ module.exports = {
             });
         });
     },
-    totalCount: (memberSeq,res)=>{
+    totalCount: (blog,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
-            db.query(blogQs.TOTAL(memberSeq),memberSeq, function (err, results, fields) {
+            console.log("blod : ", blog)
+            console.log("totaCount query : ", blogQs.TOTAL(blog.memberSeq,blog.title,blog.content))
+            console.log("totalCount value : ",commonVO([blog.memberSeq,blog.title,blog.content]))
+            db.query(blogQs.TOTAL(blog.memberSeq,blog.title,blog.content),commonVO([blog.memberSeq,blog.title,blog.content]), function (err, results, fields) {
                 //result Check
                 if (err || !results || results.length == 0) {
                     console.log("err : ", err);
@@ -86,28 +90,44 @@ module.exports = {
     deleteBlog:(blogSeq,res)=>{
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
-                db.beginTransaction();
+            db.beginTransaction();
                 
-                console.log(" query : ", blogQs.DELETE)
-                db.query(blogQs.DELETE,blogSeq,function(err,results,fields){
-                    console.log("result :", results)
-                    if (err !== undefined && err !== null) {
-                        console.log("init...",err)
-                        db.rollback();
-                        db.end();
-                        res.send(errors.error(resMsg.BAD_REQUEST,'BLOG VALUE',data,'DELETE QUERY ERROR',err));
-                        return false;
-                    }
-                    if(results.affectedRows === 0){
-                        db.rollback();
-                        db.end();
-                        res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'BLOG VALUE','','DELETE Error','DELETE FAILAD..'));
-                        return false;
-                    }
-                    db.commit();
+            console.log(" query : ", blogQs.DELETE)
+            db.query(blogQs.DELETE,blogSeq,function(err,results,fields){
+                console.log("result :", results)
+                if (err !== undefined && err !== null) {
+                    console.log("init...",err)
+                    db.rollback();
                     db.end();
-                    return resolve(results.affectedRows);
+                    res.send(errors.error(resMsg.BAD_REQUEST,'BLOG VALUE',data,'DELETE QUERY ERROR',err));
+                    return false;
+                }
+                if(results.affectedRows === 0){
+                    db.rollback();
+                    db.end();
+                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'BLOG VALUE','','DELETE Error','DELETE FAILAD..'));
+                    return false;
+                }
+                db.query(comQs.DELETE_ALL,blogSeq,function(err,results,fields){
+                        console.log("result :", results)
+                        if (err !== undefined && err !== null) {
+                            console.log("init...",err)
+                            db.rollback();
+                            db.end();
+                            res.send(errors.error(resMsg.BAD_REQUEST,err));
+                            return false;
+                        }
+                        if(results.affectedRows === 0){
+                            db.rollback();
+                            db.end();
+                            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'DELETE FAILAD..'));
+                            return false;
+                        }
+                        db.commit();
+                        db.end();
+                        return resolve(results.affectedRows);
                 });
+            });
         });
     },
     update:(blog,res)=>{
@@ -221,7 +241,6 @@ module.exports = {
                         return false;
                     }
                     db.commit();
-                    db.end();
                     return resolve(results.affectedRows);
                 });
         });
@@ -241,15 +260,17 @@ module.exports = {
                         res.send(errors.error(resMsg.BAD_REQUEST,err));
                         return false;
                     }
-                    if(results.affectedRows === 0){
+                    console.log("result : ", results[0][0].RESULT);
+                    if(results[0][0].RESULT === 0){
                         db.rollback();
                         db.end();
                         res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'DELETE FAILAD..'));
                         return false;
                     }
+
                     db.commit();
                     db.end();
-                    return resolve(results.affectedRows);
+                    return resolve(results[0][0].RESULT);
                 });
         });
     },

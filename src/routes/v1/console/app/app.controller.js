@@ -14,7 +14,7 @@ router.post("/",(req,res)=>{
     var client_id = util.getClientId(req.body.id);
     var secretKey = util.getSecretKey(req.body.id);
     var ip = requestIp.getClientIp(req);
-    var app = appVo.app(req.body.id,req.body.appName,req.body.enterpriseName,req.body.filePath,req.body.originalFileName,req.body.renameFileName,ip,client_id,secretKey);
+    var app = appVo.app(req.query.id,req.body.appName,req.body.enterpriseName,req.body.filePath,req.body.originalFileName,req.body.renameFileName,ip,client_id,secretKey);
 
     appService.insertApp(app,res).then((data)=>{
         if(data > 0){

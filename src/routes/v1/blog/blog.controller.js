@@ -136,7 +136,7 @@ router.get('/list',async(req,res)=>{
         var blogSeq     = req.query.blogSeq;
         var commentSeq  = req.query.commentSeq;
         console.log("comment Seq : ", commentSeq);
-        blogService.deleteComment(comment.delete(blogSeq,commentSeq),res).then((data)=>{
+        blogService.deleteComment(commentSeq,res).then((data)=>{
             res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data))
         });
     });
@@ -167,7 +167,7 @@ async function pagingList(blog,res){
     var totalCount     = 0;
     var totalPageCount = 0;
     //내 블로그 작성글 전체 카운트
-    blogService.totalCount(blog.memberSeq,res).then((data)=>{
+    blogService.totalCount(blog,res).then((data)=>{
         totalCount         = data;
         var limit          = 10;
 

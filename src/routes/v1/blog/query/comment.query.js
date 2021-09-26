@@ -19,6 +19,7 @@ module.exports={
                                 ?
                                )`;
                         },
-        DELETE:`DELETE FROM COMMENT WHERE BLOG_SEQ = ? AND COMMENT_SEQ = ?`,
+        DELETE:`CALL COMMENT_DELETE(?)`,
+        DELETE_ALL:`DELETE FROM COMMENT WHERE BLOG_SEQ = ?`,
         UPDATE:`UPDATE COMMENT SET TEXT = ? WHERE BLOG_SEQ = ? AND COMMENT_SEQ = ?`
 }

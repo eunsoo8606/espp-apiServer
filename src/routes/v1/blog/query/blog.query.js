@@ -21,7 +21,15 @@ module.exports={
 
                    return list;
             },
-    TOTAL     : (memberSeq)=>{return `SELECT COUNT(*) as COUNT FROM BLOG ${(memberSeq !== "" && memberSeq !== undefined?"WHERE MEMBER_SEQ = ?":"")}`;},
+    TOTAL     : (memberSeq,title,content)=>{
+                              return `SELECT COUNT(*) as COUNT 
+                                        FROM BLOG
+                                       WHERE 1=1
+                               ${(memberSeq !== "" && memberSeq !== undefined?"AND MEMBER_SEQ = ?":"")}
+                               ${(title !== undefined && title !== '') ? 'AND TITLE LIKE CONCAT("%",?,"%")':''}
+                               ${(content !== undefined && content !== '')?'AND CONTENT LIKE CONCAT("%",?,"%")':''}
+                               `;
+                             },
     SELECT_ONE : `
                   SELECT  a.BLOG_SEQ,
                           a.MAIN_IMG,
