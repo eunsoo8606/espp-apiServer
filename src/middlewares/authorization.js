@@ -94,8 +94,8 @@ module.exports = {
                     //res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'AUTHORIZATION_CODE','','INSERT Error','AUTHORIZATION INSERT FAILAD..'));
                     return resolve('no');
                 }
+                console.log("results.affectedRows : ", results.affectedRows);
                 db.commit();
-                db.end();
                 return resolve('ok');
                 });
         });

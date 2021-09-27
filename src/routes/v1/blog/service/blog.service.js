@@ -13,6 +13,7 @@ module.exports = {
                 var db = mysqlConObj.init();
                 db.beginTransaction();
                 console.log(" query : ", blogQs.INSERT)
+                console.log("Data : ",data)
                 db.query(blogQs.INSERT,data,function(err,results,fields){
                     if (err !== undefined && err !== null) {
                         console.log("init...",err)
@@ -28,7 +29,6 @@ module.exports = {
                         return false;
                     }
                     db.commit();
-                    db.end();
                     return resolve(results.affectedRows);
                 });
         });
@@ -124,7 +124,6 @@ module.exports = {
                             return false;
                         }
                         db.commit();
-                        db.end();
                         return resolve(results.affectedRows);
                 });
             });
@@ -184,7 +183,6 @@ module.exports = {
         });
     },
     count:(blogSeq)=>{
-        return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
             console.log("top3 query : ", blogQs.COUNT)
             db.query(blogQs.COUNT,blogSeq, function (err, results, fields) {
@@ -196,9 +194,8 @@ module.exports = {
                 }
                 var result = results;
                 db.end();
-                return resolve(result);
+                return result;
             });
-        });
     },
     selectComments:(blogSeq,res)=>{
         return new Promise((resolve,reject)=>{

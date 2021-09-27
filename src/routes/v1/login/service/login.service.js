@@ -14,6 +14,7 @@ module.exports ={
 
         return new Promise((resolve, reject)=>{
             db.query(query, function (err, results, fields) {
+                console.log("results : ", results);
                 // 회원정보 조회 결과
                 if (err !== undefined && err !== null) {
                   res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.DB_ERROR,err));
@@ -33,6 +34,7 @@ module.exports ={
                     return  false;
                 }
                 logState.updateLoginState(user.MEMBER_SEQ,'Y',res).then((data)=>{
+                    console.log("Data : ", data);
                     if(data == 0){
                         res.status(stCd.DB_ERROR).send(errors.error(resMsg.REQUEST_FAILD,'REQUEST_FAILD..'));
                         return  false;

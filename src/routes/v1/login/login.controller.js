@@ -21,12 +21,13 @@ router.get("/",(req,res)=>{
 router.post('/login_process',async (req,res)=>{
     var email   = req.body.email;
     var pwd     = req.body.pwd;
-    
+    console.log("login_process : init..");
     var cookies = {};
     if(req.headers.cookie !== undefined) cookies = cookie.parse(req.headers.cookie);
     var error;
     var results;
     loginService.login(email,pwd,res).then((user)=>{
+        console.log("login_process : init..",user);
         var authCode = auth.getAuthorizationCode(user.MEMBER_SEQ);
         auth.insertAuthorizationCode(authCode,user.MEMBER_SEQ).then((result)=>{
             if(result === 'no'){
@@ -34,6 +35,7 @@ router.post('/login_process',async (req,res)=>{
                 results = '?error=' + error;
             }
             results = '?code=' + authCode;
+            console.log("data : ", results);
             res.redirect(hash.decrypt(cookies.re_lo) + results);
             res.end();
         });

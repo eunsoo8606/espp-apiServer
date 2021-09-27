@@ -9,8 +9,8 @@ module.exports={
         return new Promise((resolve,reject)=>{
             const db = mysqlConObj.init();
             db.beginTransaction();
-
             db.query(loginQs.STATE,[state,memberSeq], function (err, results, fields) {
+                console.log("login state result : ", results);
                 // state result
                 if (err !== undefined && err !== null) {
                     db.rollback();

@@ -21,6 +21,7 @@ router.post('/write',auth.tokenValidator,(req,res)=>{
     var category   = req.body.category;
     var ip         = requestIp.getClientIp(req);
     blogService.insert(blogVo.blog(memberSeq,mainImg,title,content,ip,memberSeq,category),res).then((data)=>{
+        console.log("Data : ", data);
         if(data > 0){
             res.status(stCd.CREATED).send(success.success_json(resMsg.CREATED,data,true));
             res.end();
