@@ -220,10 +220,7 @@ module.exports = {
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
                 db.beginTransaction();
-                console.log("comment insert query : ", comQs.INSERT(parentSeq));
-                console.log("comment data : ", comment)
                 db.query(comQs.INSERT(parentSeq),comment,function(err,results,fields){
-                    console.log("result :", results)
                     if (err !== undefined && err !== null) {
                         console.log("init...",err)
                         db.rollback();
@@ -238,6 +235,7 @@ module.exports = {
                         return false;
                     }
                     db.commit();
+                    db.end();
                     return resolve(results.affectedRows);
                 });
         });

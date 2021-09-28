@@ -3,7 +3,6 @@ const stCd        = require('../../../../utils/statusCode');
 const hash        = require('../../../../utils/hashFnc');
 const mysqlConObj = require('../../../../config/mysql');
 const errors      = require('../../../../utils/error');
-const logState    = require('../../../../middlewares/loginState');
 
 module.exports ={
     login: (email,pwd,res)=>{
@@ -33,14 +32,7 @@ module.exports ={
                     res.status(stCd.FORBIDDEN).send(errors.error(resMsg.ACCESS_DENIED,'UNAUTHORIZAED USER..'));
                     return  false;
                 }
-                logState.updateLoginState(user.MEMBER_SEQ,'Y',res).then((data)=>{
-                    console.log("Data : ", data);
-                    if(data == 0){
-                        res.status(stCd.DB_ERROR).send(errors.error(resMsg.REQUEST_FAILD,'REQUEST_FAILD..'));
-                        return  false;
-                    }
                     return resolve(user);   
-                });
             });
         })
     }        

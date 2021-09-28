@@ -1,4 +1,5 @@
 const auth          = require('../../../middlewares/authorization');
+const logState      = require('../../../middlewares/loginState');
 const hash          = require('../../../middlewares/hashFnc');
 const resMsg        = require('../../../utils/responseMssage');
 const stCd          = require('../../../utils/statusCode');
@@ -35,7 +36,13 @@ router.post('/login_process',async (req,res)=>{
                 results = '?error=' + error;
             }
             results = '?code=' + authCode;
-            console.log("data : ", results);
+            
+            logState.updateLoginState(user.MEMBER_SEQ,'Y',res).then((data)=>{
+                console.log("Data : ", data);
+                if(data == 0){
+                    console.log("login 실패...");
+                }
+            });
             res.redirect(hash.decrypt(cookies.re_lo) + results);
             res.end();
         });

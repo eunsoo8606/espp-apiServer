@@ -9,14 +9,16 @@ const conn = {
         };
 
 const mysqlConnection = {
-        init :  function(){return mysql.createConnection(conn);},
+        init :  function(){
+            return mysql.createConnection(conn);
+        },
         open :  function(con){
                 con.connect(err => { 
                     if(err) console.log("MySQL 연결 실패 : ", err); 
                     else    console.log("MySQL Connected!!!"); 
                 });
         },
-        close:  (con)=>{ // #4 
+        close:  async (con)=>{ // #4 
                     con.end(err => { 
                         if(err) console.log("MySQL 종료 실패 : ", err); 
                         else    console.log("MySQL Terminated..."); 
