@@ -42,9 +42,9 @@ router.post('/login_process',async (req,res)=>{
                 if(data == 0){
                     console.log("login 실패...");
                 }
+                res.redirect(hash.decrypt(cookies.re_lo) + results);
+                res.end();
             });
-            res.redirect(hash.decrypt(cookies.re_lo) + results);
-            res.end();
         });
     });
 });

@@ -21,7 +21,7 @@ module.exports ={
                 }
                   
                 if(results.length == 0){
-                    res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.ACCESS_DENIED,'USER NOT FOUND..'));
+                    res.render("error/error.ejs",{"status":"401","message":"USER NOT FOUND.."})
                    return false;
                 }
 
