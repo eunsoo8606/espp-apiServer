@@ -91,7 +91,7 @@ module.exports = {
         return new Promise((resolve,reject)=>{
             var db = mysqlConObj.init();
             db.beginTransaction();
-                
+            var resultRow = 0;
             console.log(" query : ", blogQs.DELETE)
             db.query(blogQs.DELETE,blogSeq,function(err,results,fields){
                 console.log("result :", results)
@@ -108,6 +108,7 @@ module.exports = {
                     res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'BLOG VALUE','','DELETE Error','DELETE FAILAD..'));
                     return false;
                 }
+                resultRow = results.affectedRows;
                 db.query(comQs.DELETE_ALL,blogSeq,function(err,results,fields){
                         console.log("result :", results)
                         if (err !== undefined && err !== null) {
@@ -117,14 +118,9 @@ module.exports = {
                             res.send(errors.error(resMsg.BAD_REQUEST,err));
                             return false;
                         }
-                        if(results.affectedRows === 0){
-                            db.rollback();
-                            db.end();
-                            res.status(stCd.BAD_REQUEST).send(errors.error(resMsg.INSERT_FAILD,'DELETE FAILAD..'));
-                            return false;
-                        }
                         db.commit();
-                        return resolve(results.affectedRows);
+                        db.end();
+                        return resolve(resultRow);
                 });
             });
         });
