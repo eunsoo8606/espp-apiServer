@@ -10,10 +10,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const {Builder, By, Key, until} = require('selenium-webdriver'); 
 var chrome = require('selenium-webdriver/chrome');
-const chromedriver = require('chromedriver');
-//--headless , --no-sandbox 설정하면 브라우저 열지 않음.
-//설정 주입.
-chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
+
+
+
 //크롭 option 객체 생성.
 var chromeOptions = new chrome.Options();
 chromeOptions.addArguments('--headless');
