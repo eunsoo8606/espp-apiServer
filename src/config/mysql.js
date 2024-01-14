@@ -1,4 +1,4 @@
-const mysql = require('mysql');  // mysql 모듈 로드
+const mysql = require('mysql2');  // mysql 모듈 로드
 const dotenv = require('dotenv').config();
 const conn = { 
         host:     process.env.MYSQL_HOST,
