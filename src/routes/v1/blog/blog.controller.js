@@ -14,12 +14,13 @@ const comment       = require("./vo/comment.vo");
 const common        = require("../common/common.vo");
 
 router.post('/write',auth.tokenValidator,(req,res)=>{
-    var title      = req.body.title;
-    var content    = req.body.content;
-    var memberSeq  = req.query.id;
-    var mainImg    = req.body.mainImg;
-    var category   = req.body.category;
-    var ip         = requestIp.getClientIp(req);
+    let title      = req.body.title;
+    let content    = req.body.content;
+    let memberSeq  = req.query.id;
+    let mainImg    = req.body.mainImg;
+    let category= req.body.category;
+    let ip         = requestIp.getClientIp(req);
+
     blogService.insert(blogVo.blog(memberSeq,mainImg,title,content,ip,memberSeq,category),res).then((data)=>{
         console.log("Data : ", data);
         if(data > 0){
@@ -30,8 +31,8 @@ router.post('/write',auth.tokenValidator,(req,res)=>{
 });
 router.get('/list',async(req,res)=>{
     console.log("list init....",req.query);
-    var blog           = {cpage:req.query.cpage,selectSize:req.query.selectSize,title:req.query.title,content:req.query.content,limit:req.query.limit,memberSeq:req.query.id};
-    var scope          = req.query.scope;
+    let blog= {cpage:req.query.cpage,selectSize:req.query.selectSize,title:req.query.title,content:req.query.content,limit:req.query.limit,memberSeq:req.query.id};
+    let scope          = req.query.scope;
 
     if(scope !== undefined && scope.indexOf(",") > -1){
         var categoty       = scope.split(",");
@@ -158,6 +159,7 @@ router.get('/list',async(req,res)=>{
 async function list(blog,res){
     console.log("list inti...")
     blogService.selectList(blog,res).then((data)=>{
+        console.log("data : ", data)
         res.status(stCd.OK).send(success.success_json(resMsg.SUCCESS_REQUEST,data,''));
         res.end();
     });
