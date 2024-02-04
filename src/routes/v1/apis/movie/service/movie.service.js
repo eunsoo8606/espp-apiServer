@@ -27,36 +27,36 @@ module.exports = {
     },
     insert:(res,data)=>{
         return new Promise((resolve,reject)=>{
-            var db = mysqlConObj.init();
+            let db = mysqlConObj.init();
             db.beginTransaction();
-            var results = 0;
+            let results = 0;
             
             data.forEach((item)=>{
-            db.query(query.INSERT,vo('LO',item.img,item.rank,item.title,item.rate,item.star),(err,result)=>{
-                if (err !== undefined && err !== null) {
-                    console.log("error init..")
-                    db.rollback();
-                    db.end();
-                    reject(error(resMsg.DB_ERROR,'pwd','','DB Error',err));
-                    return false;
-                }
+                console.log("item : ", item)
+                db.query(query.INSERT,vo('LO',item.img,item.rank,item.title,item.time),(err,result)=>{
+                    if (err !== undefined && err !== null) {
+                        console.log("error init..",err)
+                        db.rollback();
+                        db.end();
+                        reject(error(resMsg.DB_ERROR,'pwd','','DB Error',err));
+                        return false;
+                    }
 
-                if(result.affectedRows == 0){
-                    db.rollback();
-                    db.end();
-                    reject(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','SELECT Error','SELECT FAILAD..'));
-                    return false;
-                }
-                results += result.affectedRows;
+                    if(result.affectedRows == 0){
+                        db.rollback();
+                        db.end();
+                        reject(errors.error(resMsg.INSERT_FAILD,'APP VALUE','','SELECT Error','SELECT FAILAD..'));
+                        return false;
+                    }
+                    results += result.affectedRows;
 
-                if(results == data.length){
-                    db.commit();
-                    db.end();
-                    return resolve(results);
-                }
+                    if(results == data.length){
+                        db.commit();
+                        db.end();
+                        return resolve(results);
+                    }
+                });
             });
-        });
-
         });
     },
     delete:()=>{
@@ -65,7 +65,6 @@ module.exports = {
             db.beginTransaction();
             db.query(query.DELETE,(err,result)=>{
                 if (err !== undefined && err !== null) {
-                    console.log("error init..")
                     db.rollback();
                     db.end();
                     reject(error(resMsg.DB_ERROR,'pwd','','DB Error',err));

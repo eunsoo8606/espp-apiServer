@@ -43,15 +43,20 @@ var job = cron.schedule('40 17 1-31 * *',()=>{
                 //특정 엘리먼트 값 추출
                 const num_info = await driver.findElements(By.className('num_info'));
                 const tit_info = await driver.findElements(By.className('tit_info'));
-                const rate_info = await driver.findElements(By.className('rate_info'));
-                const star_info = await driver.findElements(By.className('star_info'));
+                const roboto_info = await driver.findElements(By.className('roboto')); //상영시간
                 //XPATH 를 통하여 ID 나 CLASS가 없는 태그 선택하여 값 추출
                 const img = await driver.findElements(By.xpath('//*[@id="contents"]/div/ul[4]/li//img[@*]'));
+
+
+                console.log("num_info : ", num_info)
+                console.log("tit_info : ", tit_info)
+                console.log("roboto_info : ", roboto_info)
+
             
-                var movie = null;
-                var j = 0;
+                let movie = null;
+                let j  = 0;
                 //JSON으로 PARSING 작업
-                for (var i = 0; i < num_info.length; i++) { 
+                for (let i = 0; i < num_info.length; i++) {
                         movie = new Object();
                         //순위나 TITLE 이 없는 값은 담지 않음.
                         // 가변배열이라 맞춰주기 위한 조건문.
@@ -60,12 +65,12 @@ var job = cron.schedule('40 17 1-31 * *',()=>{
                             j--;
                         }
                         else{
+
                             //OBJECT 에 담기
-                            movie.img = await img[i].getAttribute('src');
-                            movie.rank = await num_info[i].getText();
-                            movie.title = await tit_info[j].getText();
-                            movie.rate = await rate_info[j].getText();
-                            movie.star = await star_info[j].getText();
+                            movie.img    = await img[i].getAttribute('src');
+                            movie.rank   = await num_info[i].getText();
+                            movie.title  = await tit_info[j].getText();
+                            movie.time   = await roboto_info[j].getText() + '분'; //상영시간
                             //배열에 PUSH
                             movieList.push(movie);
                         }
